@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Audio Streaming</title>
+</head>
+<body>
+  <h1>Audio Streamer</h1>
+  <button id="start">Start Streaming</button>
+  <button id="stop" disabled>Stop Streaming</button>
+
+  <script>
+    const startButton = document.getElementById("start");
+    const stopButton = document.getElementById("stop");
+
+    let mediaRecorder;
+    let socket;
+
+    startButton.addEventListener("click", async () => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      // WebSocket connection
+      socket = new WebSocket("ws://localhost:8080");
+
+      socket.onopen = () => {
+        console.log("WebSocket connected");
+      };
+
+      socket.onclose = () => {
+        console.log("WebSocket closed");
+      };
+
+      // MediaRecorder for audio stream
+      mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0 && socket.readyState === WebSocket.OPEN) {
+          socket.send(event.data);
+        }
+      };
+
+      mediaRecorder.start(250); // Send audio data every 250ms
+      startButton.disabled = true;
+      stopButton.disabled = false;
+    });
+
+    stopButton.addEventListener("click", () => {
+      mediaRecorder.stop();
+      socket.close();
+      startButton.disabled = false;
+      stopButton.disabled = true;
+    });
+  </script>
+</body>
+</html>
