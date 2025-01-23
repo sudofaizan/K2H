@@ -1,5 +1,5 @@
-#npm install
-#node server_wav.js
+# npm install
+# node server_wav.js
 
 working->
 1. server_wav. will create output.wav fetch from index.html real mic audio

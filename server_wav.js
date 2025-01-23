@@ -5,7 +5,7 @@ const ffmpeg = require("fluent-ffmpeg");
 const http = require("http");
 const path = require("path");
 
-// WebSocket Server
+// WebSocket Server code
 const wss = new WebSocket.Server({ port: 8080 });
 
 wss.on("connection", (ws) => {
@@ -42,7 +42,7 @@ console.log("WebSocket server running on ws://localhost:8080");
 
 
 
-
+//This below code is to serve HTML files.
 
 const PORT = 80;
 
